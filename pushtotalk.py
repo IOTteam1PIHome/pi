@@ -65,6 +65,7 @@ client = mqtt.Client()
 client.connect(server, 1883, 60)
 client.on_connect = on_connect
 client.on_message = on_message
+#client.loop_forever()
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
 END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
@@ -164,18 +165,18 @@ class SampleAssistant(object):
                     logging.info('emer')
                     client.publish("pi/emer", "1")
                 else:
-                    logging.info('not')
+                    logging.info('emer:not')
                     client.publish("pi/emer", "0")
 
-                if '켜줘' in ''.join(r.transcript for r in resp.speech_results):
+                if '켜' in ''.join(r.transcript for r in resp.speech_results):
                     logging.info('lamp on')
-                    client.publish("pi/lamp", "on")
-                elif '꺼줘' in ''.join(r.transcript for r in resp.speech_results):
+                    client.publish("lamp", "on")
+                elif '꺼' in ''.join(r.transcript for r in resp.speech_results):
                     logging.info('lamp off')
-                    client.publish("pi/emer", "off")
+                    client.publish("lamp", "off")
                 else:
                     logging.info('else lamp')
-                    client.publish("pi/emer", "not")
+                    client.publish("lamp", "lamp:not")
 
             if len(resp.audio_out.audio_data) > 0:
                 if not self.conversation_stream.playing:
